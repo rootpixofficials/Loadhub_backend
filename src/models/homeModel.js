@@ -5,7 +5,7 @@ export const fetchData = async () => {
     // Example: Fetching all rows from a hypothetical 'users' table
     
     // const query = 'SELECT * FROM users';
-    // const { rows } = await pool.query(query);
+    // const [rows] = await pool.query(query);
     // return rows;
 
     // For now, returning mock data since the table might not exist yet

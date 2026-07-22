@@ -1,22 +1,23 @@
-import pg from 'pg';
-
-const { Pool } = pg;
+import mysql from 'mysql2/promise';
 
 // Create a new pool using environment variables
-const pool = new Pool({
+const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
 // Function to test the connection when server starts
 export const connectDB = async () => {
     try {
-        const client = await pool.connect();
-        console.log('✅ Successfully connected to the PostgreSQL database');
-        client.release(); // release the client back to the pool
+        const connection = await pool.getConnection();
+        console.log('✅ Successfully connected to the MySQL database');
+        connection.release(); // release the connection back to the pool
     } catch (err) {
         console.error('❌ Database connection error:', err.message);
         // Depending on your need, you might want to process.exit(1) here 
