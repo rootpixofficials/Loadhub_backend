@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import homeRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { connectDB } from './config/db.js';
@@ -15,6 +16,31 @@ connectDB().then(() => {
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// CORS Configuration
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            'https://loadhub.in',
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'capacitor://localhost',
+            'ionic://localhost'
+        ];
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('file://')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 
 // Routes
 app.use('/api', homeRoutes);
