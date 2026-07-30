@@ -1,4 +1,4 @@
-import { createUser, getUserByMobile } from '../models/userModel.js';
+import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser } from '../models/userModel.js';
 import { generateTokens } from '../../token.js';
 
 export const registerUser = async (req, res) => {
@@ -15,23 +15,18 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'User with this mobile number already exists' });
         }
 
-        const newUser = await createUser({
+        const otp = '1234'; // Mocked OTP for testing
+        await createTempUser({
             full_name,
             company_name,
             mobile_number,
             email,
             role
-        });
+        }, otp);
 
-        const tokens = generateTokens(newUser);
-
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            message: 'User created successfully',
-            data: {
-                user: newUser,
-                tokens
-            }
+            message: 'OTP sent successfully for registration (temporary OTP is 1234)'
         });
     } catch (error) {
         console.error('Error in registerUser:', error);
@@ -96,3 +91,52 @@ export const verifyLoginOtp = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
+export const verifyRegisterOtp = async (req, res) => {
+    try {
+        const { mobile_number, otp } = req.body;
+        
+        if (!mobile_number || !otp) {
+            return res.status(400).json({ success: false, message: 'Mobile number and OTP are required' });
+        }
+
+        const tempUser = await getTempUserByMobile(mobile_number);
+        if (!tempUser) {
+            return res.status(404).json({ success: false, message: 'Registration request not found or expired' });
+        }
+
+        if (tempUser.otp !== otp) {
+            return res.status(401).json({ success: false, message: 'Invalid OTP' });
+        }
+
+        // Depending on MySQL driver, JSON columns might be returned as string or object
+        const userData = typeof tempUser.user_data === 'string' ? JSON.parse(tempUser.user_data) : tempUser.user_data;
+
+        // Verify again just in case
+        const existingUser = await getUserByMobile(mobile_number);
+        if (existingUser) {
+            await deleteTempUser(mobile_number);
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        }
+
+        const newUser = await createUser(userData);
+        
+        // Clean up temp table
+        await deleteTempUser(mobile_number);
+
+        const tokens = generateTokens(newUser);
+
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            data: {
+                user: newUser,
+                tokens
+            }
+        });
+    } catch (error) {
+        console.error('Error in verifyRegisterOtp:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
