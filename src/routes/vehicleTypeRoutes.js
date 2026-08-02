@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', upload.single('image'), addVehicleType);
+router.post('/', upload.any(), addVehicleType);
 router.get('/', getVehicleTypes);
 
 export default router;

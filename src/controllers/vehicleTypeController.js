@@ -8,8 +8,13 @@ export const addVehicleType = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Name and capacity are required' });
         }
 
-        let vehicle_type_image = null;
-        if (req.file) {
+        let vehicle_type_image = req.body.vehicle_type_image || req.body.image || null;
+        
+        if (req.files && req.files.length > 0) {
+            const file = req.files[0];
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            vehicle_type_image = `${baseUrl}/uploads/vehicles/${file.filename}`;
+        } else if (req.file) {
             const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
             vehicle_type_image = `${baseUrl}/uploads/vehicles/${req.file.filename}`;
         }
