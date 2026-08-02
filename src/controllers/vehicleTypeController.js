@@ -2,10 +2,15 @@ import { createVehicleType, getAllVehicleTypes } from '../models/vehicleTypeMode
 
 export const addVehicleType = async (req, res) => {
     try {
-        const { name, capacity, description, image_url } = req.body;
+        const { name, capacity, description } = req.body;
 
         if (!name || !capacity) {
             return res.status(400).json({ success: false, message: 'Name and capacity are required' });
+        }
+
+        let image_url = null;
+        if (req.file) {
+            image_url = `/uploads/vehicles/${req.file.filename}`;
         }
 
         const newVehicleType = await createVehicleType({ name, capacity, description, image_url });

@@ -20,6 +20,9 @@ connectDB().then(() => {
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // CORS Configuration
 const corsOptions = {
     origin: function (origin, callback) {
