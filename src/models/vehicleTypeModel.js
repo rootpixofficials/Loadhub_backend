@@ -7,7 +7,7 @@ export const initVehicleTypeTable = async () => {
             name VARCHAR(255) NOT NULL,
             capacity VARCHAR(255) NOT NULL,
             description TEXT,
-            image_url VARCHAR(255),
+            vehicle_type_image VARCHAR(255),
             is_active BOOLEAN DEFAULT true,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -16,18 +16,25 @@ export const initVehicleTypeTable = async () => {
     try {
         await pool.query(query);
         console.log('✅ Vehicle Types table initialized');
+        
+        try {
+            await pool.query('ALTER TABLE vehicle_types CHANGE image_url vehicle_type_image VARCHAR(255);');
+            console.log('✅ Renamed image_url to vehicle_type_image');
+        } catch (e) {
+            // Ignore error if column doesn't exist or already renamed
+        }
     } catch (err) {
         console.error('❌ Error initializing Vehicle Types table:', err.message);
     }
 };
 
 export const createVehicleType = async (data) => {
-    const { name, capacity, description, image_url } = data;
+    const { name, capacity, description, vehicle_type_image } = data;
     const query = `
-        INSERT INTO vehicle_types (name, capacity, description, image_url)
+        INSERT INTO vehicle_types (name, capacity, description, vehicle_type_image)
         VALUES (?, ?, ?, ?)
     `;
-    const values = [name, capacity, description, image_url];
+    const values = [name, capacity, description, vehicle_type_image];
     
     try {
         const [result] = await pool.query(query, values);

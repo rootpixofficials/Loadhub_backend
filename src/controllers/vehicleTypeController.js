@@ -8,12 +8,13 @@ export const addVehicleType = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Name and capacity are required' });
         }
 
-        let image_url = null;
+        let vehicle_type_image = null;
         if (req.file) {
-            image_url = `/uploads/vehicles/${req.file.filename}`;
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            vehicle_type_image = `${baseUrl}/uploads/vehicles/${req.file.filename}`;
         }
 
-        const newVehicleType = await createVehicleType({ name, capacity, description, image_url });
+        const newVehicleType = await createVehicleType({ name, capacity, description, vehicle_type_image });
 
         res.status(201).json({
             success: true,
