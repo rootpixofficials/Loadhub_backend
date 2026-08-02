@@ -3,8 +3,10 @@ import express from 'express';
 import cors from 'cors';
 import homeRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import vehicleTypeRoutes from './routes/vehicleTypeRoutes.js';
 import { connectDB } from './config/db.js';
 import { initUserTable } from './models/userModel.js';
+import { initVehicleTypeTable } from './models/vehicleTypeModel.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 // Connect to MySQL Database
 connectDB().then(() => {
     initUserTable();
+    initVehicleTypeTable();
 });
 
 // Middleware to parse JSON bodies
@@ -45,6 +48,7 @@ app.use(cors(corsOptions));
 // Routes
 app.use('/api', homeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/vehicle-types', vehicleTypeRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {
