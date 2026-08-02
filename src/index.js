@@ -4,9 +4,11 @@ import cors from 'cors';
 import homeRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import vehicleTypeRoutes from './routes/vehicleTypeRoutes.js';
+import loadRoutes from './routes/loadRoutes.js';
 import { connectDB } from './config/db.js';
 import { initUserTable } from './models/userModel.js';
 import { initVehicleTypeTable } from './models/vehicleTypeModel.js';
+import { initLoadTable } from './models/loadModel.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 connectDB().then(() => {
     initUserTable();
     initVehicleTypeTable();
+    initLoadTable();
 });
 
 // Middleware to parse JSON bodies
@@ -52,6 +55,7 @@ app.use(cors(corsOptions));
 app.use('/api', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicle-types', vehicleTypeRoutes);
+app.use('/api/loads', loadRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {
