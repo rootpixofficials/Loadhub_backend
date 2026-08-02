@@ -2,11 +2,20 @@ import { createLoad, getAllLoads } from '../models/loadModel.js';
 
 export const postLoad = async (req, res) => {
     try {
-        const { 
+        let { 
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            load_type, approx_weight, driver_id, estimated_fare 
+            load_type, approx_weight, driver_id, estimated_fare, goods_image 
         } = req.body;
+
+        if (req.files && req.files.length > 0) {
+            const file = req.files[0];
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            goods_image = `${baseUrl}/uploads/loads/${file.filename}`;
+        } else if (req.file) {
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            goods_image = `${baseUrl}/uploads/loads/${req.file.filename}`;
+        }
 
         if (!pickup_location || !pickup_lat || !pickup_lng) {
             return res.status(400).json({ success: false, message: 'Pickup location details are required' });
@@ -18,7 +27,7 @@ export const postLoad = async (req, res) => {
         const newLoad = await createLoad({ 
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            load_type, approx_weight, driver_id, estimated_fare 
+            load_type, approx_weight, goods_image, driver_id, estimated_fare 
         });
 
         res.status(201).json({

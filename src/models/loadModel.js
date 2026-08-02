@@ -14,6 +14,7 @@ export const initLoadTable = async () => {
             vehicle_type_id INT,
             load_type VARCHAR(255),
             approx_weight VARCHAR(255),
+            goods_image VARCHAR(255),
             driver_id INT,
             estimated_fare DECIMAL(10, 2),
             status VARCHAR(50) DEFAULT 'pending',
@@ -24,6 +25,13 @@ export const initLoadTable = async () => {
     try {
         await pool.query(query);
         console.log('✅ Loads table initialized');
+        
+        try {
+            await pool.query('ALTER TABLE loads ADD COLUMN goods_image VARCHAR(255);');
+            console.log('✅ Added goods_image column to loads table');
+        } catch (e) {
+            // Ignore error if column already exists
+        }
     } catch (err) {
         console.error('❌ Error initializing Loads table:', err.message);
     }
@@ -33,15 +41,15 @@ export const createLoad = async (data) => {
     const { 
         user_id, pickup_location, pickup_lat, pickup_lng, 
         drop_location, drop_lat, drop_lng, vehicle_type_id, 
-        load_type, approx_weight, driver_id, estimated_fare 
+        load_type, approx_weight, goods_image, driver_id, estimated_fare 
     } = data;
 
     const query = `
         INSERT INTO loads (
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            load_type, approx_weight, driver_id, estimated_fare
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            load_type, approx_weight, goods_image, driver_id, estimated_fare
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     
     const values = [
@@ -49,7 +57,7 @@ export const createLoad = async (data) => {
         pickup_location, pickup_lat, pickup_lng, 
         drop_location, drop_lat, drop_lng, 
         vehicle_type_id || null, 
-        load_type || null, approx_weight || null, 
+        load_type || null, approx_weight || null, goods_image || null,
         driver_id || null, estimated_fare || null
     ];
     
