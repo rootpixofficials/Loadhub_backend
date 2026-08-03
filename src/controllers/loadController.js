@@ -18,10 +18,20 @@ export const postLoad = async (req, res) => {
         }
 
         if (!pickup_location || !pickup_lat || !pickup_lng) {
-            return res.status(400).json({ success: false, message: 'Pickup location details are required' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Pickup location details are required',
+                received_keys: Object.keys(req.body),
+                received_body: req.body 
+            });
         }
         if (!drop_location || !drop_lat || !drop_lng) {
-            return res.status(400).json({ success: false, message: 'Drop location details are required' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Drop location details are required',
+                received_keys: Object.keys(req.body),
+                received_body: req.body 
+            });
         }
 
         const newLoad = await createLoad({ 
