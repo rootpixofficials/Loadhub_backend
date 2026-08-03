@@ -36,14 +36,18 @@ export const registerUser = async (req, res) => {
 
 export const requestLoginOtp = async (req, res) => {
     try {
-        const { mobile_number } = req.body;
-        if (!mobile_number) {
-            return res.status(400).json({ success: false, message: 'Mobile number is required' });
+        const { mobile_number, role } = req.body;
+        if (!mobile_number || !role) {
+            return res.status(400).json({ success: false, message: 'Mobile number and role are required' });
         }
         
         const user = await getUserByMobile(mobile_number);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (user.role !== role) {
+            return res.status(403).json({ success: false, message: 'Access denied: role mismatch' });
         }
 
         // In a real app, you would generate a random OTP, save it to DB/Redis, and send via SMS.
@@ -60,19 +64,15 @@ export const requestLoginOtp = async (req, res) => {
 
 export const verifyLoginOtp = async (req, res) => {
     try {
-        const { mobile_number, otp, role } = req.body;
+        const { mobile_number, otp } = req.body;
         
-        if (!mobile_number || !otp || !role) {
-            return res.status(400).json({ success: false, message: 'Mobile number, OTP, and role are required' });
+        if (!mobile_number || !otp) {
+            return res.status(400).json({ success: false, message: 'Mobile number and OTP are required' });
         }
 
         const user = await getUserByMobile(mobile_number);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        if (user.role !== role) {
-            return res.status(403).json({ success: false, message: 'Access denied: role mismatch' });
         }
 
         // Hardcoded temporary OTP check
