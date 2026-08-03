@@ -9,7 +9,7 @@ export const initUserTable = async () => {
             company_name VARCHAR(255),
             mobile_number VARCHAR(20) UNIQUE NOT NULL,
             email VARCHAR(255),
-            role VARCHAR(50) DEFAULT 'shipper',
+            role VARCHAR(50) DEFAULT 'merchant partner',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
@@ -40,7 +40,7 @@ export const createUser = async (userData) => {
         INSERT INTO users (full_name, company_name, mobile_number, email, role)
         VALUES (?, ?, ?, ?, ?)
     `;
-    const values = [full_name, company_name, mobile_number, email, role || 'shipper'];
+    const values = [full_name, company_name, mobile_number, email, role || 'merchant partner'];
     
     try {
         const [result] = await pool.query(query, values);

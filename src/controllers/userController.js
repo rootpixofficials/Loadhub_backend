@@ -60,15 +60,19 @@ export const requestLoginOtp = async (req, res) => {
 
 export const verifyLoginOtp = async (req, res) => {
     try {
-        const { mobile_number, otp } = req.body;
+        const { mobile_number, otp, role } = req.body;
         
-        if (!mobile_number || !otp) {
-            return res.status(400).json({ success: false, message: 'Mobile number and OTP are required' });
+        if (!mobile_number || !otp || !role) {
+            return res.status(400).json({ success: false, message: 'Mobile number, OTP, and role are required' });
         }
 
         const user = await getUserByMobile(mobile_number);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (user.role !== role) {
+            return res.status(403).json({ success: false, message: 'Access denied: role mismatch' });
         }
 
         // Hardcoded temporary OTP check
