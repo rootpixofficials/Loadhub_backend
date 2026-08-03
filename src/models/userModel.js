@@ -92,3 +92,14 @@ export const updateUser = async (id, updateData) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
     return rows[0];
 };
+
+export const getUserById = async (id) => {
+    const query = `SELECT * FROM users WHERE id = ?;`;
+    const [rows] = await pool.query(query, [id]);
+    return rows[0];
+};
+
+export const deleteUser = async (id) => {
+    const query = `DELETE FROM users WHERE id = ?;`;
+    await pool.query(query, [id]);
+};
