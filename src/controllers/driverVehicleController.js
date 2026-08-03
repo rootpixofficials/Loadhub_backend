@@ -1,0 +1,115 @@
+import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDriverVehicle } from '../models/driverVehicleModel.js';
+
+export const createDriverVehicle = async (req, res) => {
+    try {
+        let { driver_id, vehicle_type_id, registration_number, vehicle_model, insurance_valid_until } = req.body;
+
+        if (!driver_id || !vehicle_type_id || !registration_number || !vehicle_model) {
+            return res.status(400).json({ success: false, message: 'Driver ID, Vehicle Type ID, Registration Number, and Vehicle Model are required' });
+        }
+
+        let insurance_certificate = null;
+        let rc_certificate = null;
+
+        if (req.files && req.files.length > 0) {
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            req.files.forEach(file => {
+                if (file.fieldname === 'insurance_certificate') {
+                    insurance_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;
+                } else if (file.fieldname === 'rc_certificate') {
+                    rc_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;
+                }
+            });
+        }
+
+        const newVehicle = await addDriverVehicle({
+            driver_id, vehicle_type_id, registration_number, 
+            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Vehicle added successfully',
+            data: newVehicle
+        });
+    } catch (error) {
+        console.error('Error in createDriverVehicle:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const getDriverVehicles = async (req, res) => {
+    try {
+        const { driver_id } = req.params;
+        if (!driver_id) {
+            return res.status(400).json({ success: false, message: 'Driver ID is required' });
+        }
+
+        const vehicles = await getVehiclesByDriverId(driver_id);
+        res.status(200).json({
+            success: true,
+            data: vehicles
+        });
+    } catch (error) {
+        console.error('Error in getDriverVehicles:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const editDriverVehicle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        let { vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, status } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'Vehicle ID is required' });
+        }
+
+        let insurance_certificate = null;
+        let rc_certificate = null;
+
+        if (req.files && req.files.length > 0) {
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            req.files.forEach(file => {
+                if (file.fieldname === 'insurance_certificate') {
+                    insurance_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;
+                } else if (file.fieldname === 'rc_certificate') {
+                    rc_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;
+                }
+            });
+        }
+
+        const updatedVehicle = await updateDriverVehicle(id, {
+            vehicle_type_id, registration_number, vehicle_model, 
+            insurance_valid_until, insurance_certificate, rc_certificate, status
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Vehicle updated successfully',
+            data: updatedVehicle
+        });
+    } catch (error) {
+        console.error('Error in editDriverVehicle:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const removeDriverVehicle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'Vehicle ID is required' });
+        }
+
+        await deleteDriverVehicle(id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Vehicle deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error in removeDriverVehicle:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};

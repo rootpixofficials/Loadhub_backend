@@ -5,10 +5,12 @@ import homeRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import vehicleTypeRoutes from './routes/vehicleTypeRoutes.js';
 import loadRoutes from './routes/loadRoutes.js';
+import driverVehicleRoutes from './routes/driverVehicleRoutes.js';
 import { connectDB } from './config/db.js';
 import { initUserTable } from './models/userModel.js';
 import { initVehicleTypeTable } from './models/vehicleTypeModel.js';
 import { initLoadTable } from './models/loadModel.js';
+import { initDriverVehicleTable } from './models/driverVehicleModel.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +20,7 @@ connectDB().then(() => {
     initUserTable();
     initVehicleTypeTable();
     initLoadTable();
+    initDriverVehicleTable();
 });
 
 // Middleware to parse JSON bodies
@@ -56,6 +59,7 @@ app.use('/api', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicle-types', vehicleTypeRoutes);
 app.use('/api/loads', loadRoutes);
+app.use('/api/driver-vehicles', driverVehicleRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {
