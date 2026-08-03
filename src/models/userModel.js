@@ -77,3 +77,18 @@ export const deleteTempUser = async (mobile_number) => {
     const query = `DELETE FROM temp_users WHERE mobile_number = ?;`;
     await pool.query(query, [mobile_number]);
 };
+
+export const updateUser = async (id, updateData) => {
+    const { full_name, company_name, email } = updateData;
+    const query = `
+        UPDATE users 
+        SET full_name = COALESCE(?, full_name),
+            company_name = COALESCE(?, company_name),
+            email = COALESCE(?, email)
+        WHERE id = ?
+    `;
+    
+    await pool.query(query, [full_name || null, company_name || null, email || null, id]);
+    const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+    return rows[0];
+};

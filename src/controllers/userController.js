@@ -1,4 +1,4 @@
-import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser } from '../models/userModel.js';
+import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser, updateUser } from '../models/userModel.js';
 import { generateTokens } from '../../token.js';
 
 export const registerUser = async (req, res) => {
@@ -140,6 +140,32 @@ export const verifyRegisterOtp = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in verifyRegisterOtp:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { full_name, company_name, email } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+
+        const updatedUser = await updateUser(id, { full_name, company_name, email });
+        
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: updatedUser
+        });
+    } catch (error) {
+        console.error('Error in updateProfile:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
