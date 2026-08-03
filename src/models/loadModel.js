@@ -75,3 +75,9 @@ export const getAllLoads = async () => {
     const [rows] = await pool.query(query);
     return rows;
 };
+
+export const getLoadsByUserId = async (user_id) => {
+    const query = `SELECT * FROM loads WHERE user_id = ? ORDER BY id DESC;`;
+    const [rows] = await pool.query(query, [user_id]);
+    return rows;
+};

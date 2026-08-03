@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { postLoad, getLoads } from '../controllers/loadController.js';
+import { postLoad, getLoads, getUserLoads } from '../controllers/loadController.js';
 
 const router = express.Router();
 
@@ -25,5 +25,6 @@ const upload = multer({ storage: storage });
 
 router.post('/', upload.any(), postLoad);
 router.get('/', getLoads);
+router.get('/user/:user_id', getUserLoads);
 
 export default router;

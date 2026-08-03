@@ -1,4 +1,4 @@
-import { createLoad, getAllLoads } from '../models/loadModel.js';
+import { createLoad, getAllLoads, getLoadsByUserId } from '../models/loadModel.js';
 
 export const postLoad = async (req, res) => {
     try {
@@ -51,6 +51,26 @@ export const getLoads = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in getLoads:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const getUserLoads = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+
+        if (!user_id) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+
+        const loads = await getLoadsByUserId(user_id);
+
+        res.status(200).json({
+            success: true,
+            data: loads
+        });
+    } catch (error) {
+        console.error('Error in getUserLoads:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
