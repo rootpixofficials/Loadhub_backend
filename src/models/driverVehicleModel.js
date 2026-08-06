@@ -8,10 +8,12 @@ export const initDriverVehicleTable = async () => {
             vehicle_type_id INT NOT NULL,
             registration_number VARCHAR(100) NOT NULL,
             vehicle_model VARCHAR(255) NOT NULL,
-            insurance_valid_until VARCHAR(100),
             insurance_certificate VARCHAR(255),
             rc_certificate VARCHAR(255),
             per_km_rate DECIMAL(10, 2),
+            location VARCHAR(255),
+            latitude DECIMAL(10, 8),
+            longitude DECIMAL(11, 8),
             status VARCHAR(50) DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -23,9 +25,12 @@ export const initDriverVehicleTable = async () => {
         
         try {
             await pool.query('ALTER TABLE driver_vehicles ADD COLUMN per_km_rate DECIMAL(10,2);');
-            console.log('✅ Added per_km_rate column to driver_vehicles');
+            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN location VARCHAR(255);');
+            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN latitude DECIMAL(10,8);');
+            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN longitude DECIMAL(11,8);');
+            console.log('✅ Added per_km_rate and location columns to driver_vehicles');
         } catch (e) {
-            // Ignore if column already exists
+            // Ignore if columns already exist
         }
     } catch (err) {
         console.error('❌ Error initializing Driver Vehicles table:', err.message);
@@ -35,19 +40,22 @@ export const initDriverVehicleTable = async () => {
 export const addDriverVehicle = async (data) => {
     const { 
         driver_id, vehicle_type_id, registration_number, 
-        vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate 
+        vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
+        location, latitude, longitude
     } = data;
 
     const query = `
         INSERT INTO driver_vehicles (
             driver_id, vehicle_type_id, registration_number, 
-            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
+            location, latitude, longitude
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
         driver_id, vehicle_type_id, registration_number, 
         vehicle_model, insurance_valid_until || null, 
-        insurance_certificate || null, rc_certificate || null, per_km_rate || null
+        insurance_certificate || null, rc_certificate || null, per_km_rate || null,
+        location || null, latitude || null, longitude || null
     ];
     
     try {
@@ -68,7 +76,8 @@ export const getVehiclesByDriverId = async (driver_id) => {
 export const updateDriverVehicle = async (id, updateData) => {
     const { 
         vehicle_type_id, registration_number, vehicle_model, 
-        insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate, status 
+        insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate, status,
+        location, latitude, longitude
     } = updateData;
 
     const query = `
@@ -80,6 +89,9 @@ export const updateDriverVehicle = async (id, updateData) => {
             insurance_certificate = COALESCE(?, insurance_certificate),
             rc_certificate = COALESCE(?, rc_certificate),
             per_km_rate = COALESCE(?, per_km_rate),
+            location = COALESCE(?, location),
+            latitude = COALESCE(?, latitude),
+            longitude = COALESCE(?, longitude),
             status = COALESCE(?, status)
         WHERE id = ?
     `;
@@ -88,7 +100,7 @@ export const updateDriverVehicle = async (id, updateData) => {
         vehicle_type_id || null, registration_number || null, 
         vehicle_model || null, insurance_valid_until || null, 
         insurance_certificate || null, rc_certificate || null, 
-        per_km_rate || null, status || null, id
+        per_km_rate || null, location || null, latitude || null, longitude || null, status || null, id
     ]);
     
     const [rows] = await pool.query('SELECT * FROM driver_vehicles WHERE id = ?', [id]);

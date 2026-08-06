@@ -2,7 +2,7 @@ import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDri
 
 export const createDriverVehicle = async (req, res) => {
     try {
-        let { driver_id, vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, per_km_rate } = req.body;
+        let { driver_id, vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, per_km_rate, location, latitude, longitude } = req.body;
 
         if (!driver_id || !vehicle_type_id || !registration_number || !vehicle_model) {
             return res.status(400).json({ success: false, message: 'Driver ID, Vehicle Type ID, Registration Number, and Vehicle Model are required' });
@@ -24,7 +24,8 @@ export const createDriverVehicle = async (req, res) => {
 
         const newVehicle = await addDriverVehicle({
             driver_id, vehicle_type_id, registration_number, 
-            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate
+            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
+            location, latitude, longitude
         });
 
         res.status(201).json({
@@ -59,7 +60,7 @@ export const getDriverVehicles = async (req, res) => {
 export const editDriverVehicle = async (req, res) => {
     try {
         const { id } = req.params;
-        let { vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, status, per_km_rate } = req.body;
+        let { vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, status, per_km_rate, location, latitude, longitude } = req.body;
 
         if (!id) {
             return res.status(400).json({ success: false, message: 'Vehicle ID is required' });
@@ -81,7 +82,8 @@ export const editDriverVehicle = async (req, res) => {
 
         const updatedVehicle = await updateDriverVehicle(id, {
             vehicle_type_id, registration_number, vehicle_model, 
-            insurance_valid_until, insurance_certificate, rc_certificate, status, per_km_rate
+            insurance_valid_until, insurance_certificate, rc_certificate, status, per_km_rate,
+            location, latitude, longitude
         });
 
         res.status(200).json({
