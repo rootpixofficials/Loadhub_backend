@@ -88,13 +88,12 @@ export const getUserLoads = async (req, res) => {
 export const getMatchingVehicles = async (req, res) => {
     try {
         const { load_id } = req.params;
-        const radius = req.query.radius ? parseFloat(req.query.radius) : 50; // Default 50km
 
         if (!load_id) {
             return res.status(400).json({ success: false, message: 'Load ID is required' });
         }
 
-        const vehicles = await getMatchingVehiclesForLoad(load_id, radius);
+        const vehicles = await getMatchingVehiclesForLoad(load_id);
 
         res.status(200).json({
             success: true,
