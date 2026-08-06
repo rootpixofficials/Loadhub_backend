@@ -97,7 +97,7 @@ export const getMatchingVehiclesForLoad = async (load_id, radiusKm = 50) => {
         SELECT 
             u.id AS driver_id, u.full_name, u.mobile_number, u.current_lat, u.current_lng,
             dv.id AS vehicle_id, dv.registration_number, dv.vehicle_model, dv.status AS vehicle_status,
-            vt.id AS vehicle_type_id, vt.vehicle_name, vt.max_weight,
+            vt.id AS vehicle_type_id, vt.name AS vehicle_name, vt.capacity AS max_weight,
             (6371 * acos(cos(radians(?)) * cos(radians(u.current_lat)) * cos(radians(u.current_lng) - radians(?)) + sin(radians(?)) * sin(radians(u.current_lat)))) AS distance_km
         FROM users u
         JOIN driver_vehicles dv ON u.id = dv.driver_id
