@@ -31,7 +31,8 @@ export const createDriverVehicle = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Vehicle added successfully',
-            data: newVehicle
+            data: newVehicle,
+            debug_received_body: req.body
         });
     } catch (error) {
         console.error('Error in createDriverVehicle:', error);
@@ -89,7 +90,8 @@ export const editDriverVehicle = async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Vehicle updated successfully',
-            data: updatedVehicle
+            data: updatedVehicle,
+            debug_received_body: req.body
         });
     } catch (error) {
         console.error('Error in editDriverVehicle:', error);

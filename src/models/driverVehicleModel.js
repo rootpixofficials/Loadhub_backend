@@ -23,15 +23,11 @@ export const initDriverVehicleTable = async () => {
         await pool.query(query);
         console.log('✅ Driver Vehicles table initialized');
         
-        try {
-            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN per_km_rate DECIMAL(10,2);');
-            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN location VARCHAR(255);');
-            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN latitude DECIMAL(10,8);');
-            await pool.query('ALTER TABLE driver_vehicles ADD COLUMN longitude DECIMAL(11,8);');
-            console.log('✅ Added per_km_rate and location columns to driver_vehicles');
-        } catch (e) {
-            // Ignore if columns already exist
-        }
+        try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN per_km_rate DECIMAL(10,2);'); } catch (e) {}
+        try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN location VARCHAR(255);'); } catch (e) {}
+        try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN latitude DECIMAL(10,8);'); } catch (e) {}
+        try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN longitude DECIMAL(11,8);'); } catch (e) {}
+        console.log('✅ Ensured all new columns exist in driver_vehicles');
     } catch (err) {
         console.error('❌ Error initializing Driver Vehicles table:', err.message);
     }
