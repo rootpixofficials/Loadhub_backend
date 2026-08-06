@@ -59,7 +59,7 @@ app.use('/api', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicle-types', vehicleTypeRoutes);
 app.use('/api/loads', loadRoutes);
-app.use('/api/driver-vehicles', driverVehicleRoutes);
+app.use('/api/driver/vehicle', driverVehicleRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {

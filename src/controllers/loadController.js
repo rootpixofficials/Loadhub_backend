@@ -1,4 +1,4 @@
-import { createLoad, getAllLoads, getLoadsByUserId } from '../models/loadModel.js';
+import { createLoad, getAllLoads, getLoadsByUserId, getMatchingVehiclesForLoad } from '../models/loadModel.js';
 
 export const postLoad = async (req, res) => {
     try {
@@ -82,5 +82,27 @@ export const getUserLoads = async (req, res) => {
     } catch (error) {
         console.error('Error in getUserLoads:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const getMatchingVehicles = async (req, res) => {
+    try {
+        const { load_id } = req.params;
+        const radius = req.query.radius ? parseFloat(req.query.radius) : 50; // Default 50km
+
+        if (!load_id) {
+            return res.status(400).json({ success: false, message: 'Load ID is required' });
+        }
+
+        const vehicles = await getMatchingVehiclesForLoad(load_id, radius);
+
+        res.status(200).json({
+            success: true,
+            message: 'Matching vehicles found',
+            data: vehicles
+        });
+    } catch (error) {
+        console.error('Error in getMatchingVehicles:', error);
+        res.status(500).json({ success: false, message: error.message || 'Internal server error' });
     }
 };

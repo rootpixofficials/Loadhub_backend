@@ -1,4 +1,4 @@
-import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser, updateUser, getUserById, deleteUser } from '../models/userModel.js';
+import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser, updateUser, getUserById, deleteUser, updateUserLocation } from '../models/userModel.js';
 import { generateTokens } from '../../token.js';
 
 export const registerUser = async (req, res) => {
@@ -215,6 +215,35 @@ export const deleteAccount = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in deleteAccount:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const updateLocation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { current_lat, current_lng } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+        if (!current_lat || !current_lng) {
+            return res.status(400).json({ success: false, message: 'current_lat and current_lng are required' });
+        }
+
+        const updatedUser = await updateUserLocation(id, current_lat, current_lng);
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Location updated successfully',
+            data: updatedUser
+        });
+    } catch (error) {
+        console.error('Error in updateLocation:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

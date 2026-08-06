@@ -81,3 +81,42 @@ export const getLoadsByUserId = async (user_id) => {
     const [rows] = await pool.query(query, [user_id]);
     return rows;
 };
+
+export const getMatchingVehiclesForLoad = async (load_id, radiusKm = 50) => {
+    // 1. Get the load's pickup coordinates and vehicle requirement
+    const [loads] = await pool.query('SELECT pickup_lat, pickup_lng, vehicle_type_id FROM loads WHERE id = ?', [load_id]);
+    if (!loads.length) {
+        throw new Error('Load not found');
+    }
+    const load = loads[0];
+    const { pickup_lat, pickup_lng, vehicle_type_id } = load;
+
+    // 2. Query vehicles driven by users whose current location is within radiusKm
+    // Using Haversine formula
+    let query = `
+        SELECT 
+            u.id AS driver_id, u.full_name, u.mobile_number, u.current_lat, u.current_lng,
+            dv.id AS vehicle_id, dv.registration_number, dv.vehicle_model, dv.status AS vehicle_status,
+            vt.id AS vehicle_type_id, vt.vehicle_name, vt.max_weight,
+            (6371 * acos(cos(radians(?)) * cos(radians(u.current_lat)) * cos(radians(u.current_lng) - radians(?)) + sin(radians(?)) * sin(radians(u.current_lat)))) AS distance_km
+        FROM users u
+        JOIN driver_vehicles dv ON u.id = dv.driver_id
+        JOIN vehicle_types vt ON dv.vehicle_type_id = vt.id
+        WHERE u.current_lat IS NOT NULL 
+          AND u.current_lng IS NOT NULL
+          AND u.role = 'merchant partner' -- Currently everyone is a merchant partner based on previous requests
+    `;
+    
+    const queryParams = [pickup_lat, pickup_lng, pickup_lat];
+
+    if (vehicle_type_id) {
+        query += ` AND dv.vehicle_type_id = ?`;
+        queryParams.push(vehicle_type_id);
+    }
+
+    query += ` HAVING distance_km <= ? ORDER BY distance_km ASC`;
+    queryParams.push(radiusKm);
+
+    const [rows] = await pool.query(query, queryParams);
+    return rows;
+};

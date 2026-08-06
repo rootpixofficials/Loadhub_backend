@@ -10,6 +10,8 @@ export const initUserTable = async () => {
             mobile_number VARCHAR(20) UNIQUE NOT NULL,
             email VARCHAR(255),
             role VARCHAR(50) DEFAULT 'merchant partner',
+            current_lat DECIMAL(10, 8),
+            current_lng DECIMAL(11, 8),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
@@ -17,6 +19,15 @@ export const initUserTable = async () => {
     try {
         await pool.query(query);
         console.log('✅ Users table initialized');
+        
+        // Safely add columns if they don't exist
+        try {
+            await pool.query('ALTER TABLE users ADD COLUMN current_lat DECIMAL(10, 8);');
+            await pool.query('ALTER TABLE users ADD COLUMN current_lng DECIMAL(11, 8);');
+            console.log('✅ Added location columns to users table');
+        } catch (e) {
+            // Ignore if columns already exist
+        }
 
         const tempQuery = `
             CREATE TABLE IF NOT EXISTS temp_users (
@@ -102,4 +113,15 @@ export const getUserById = async (id) => {
 export const deleteUser = async (id) => {
     const query = `DELETE FROM users WHERE id = ?;`;
     await pool.query(query, [id]);
+};
+
+export const updateUserLocation = async (id, lat, lng) => {
+    const query = `
+        UPDATE users 
+        SET current_lat = ?, current_lng = ?
+        WHERE id = ?
+    `;
+    await pool.query(query, [lat, lng, id]);
+    const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+    return rows[0];
 };
