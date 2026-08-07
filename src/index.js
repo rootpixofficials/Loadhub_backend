@@ -31,24 +31,7 @@ app.use('/uploads', express.static('uploads'));
 
 // CORS Configuration
 const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            'https://loadhub.in',
-            'http://localhost:5173',
-            'http://localhost:3000',
-            'capacitor://localhost',
-            'ionic://localhost'
-        ];
-        
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('file://')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
