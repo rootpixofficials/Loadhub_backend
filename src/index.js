@@ -6,11 +6,13 @@ import userRoutes from './routes/userRoutes.js';
 import vehicleTypeRoutes from './routes/vehicleTypeRoutes.js';
 import loadRoutes from './routes/loadRoutes.js';
 import driverVehicleRoutes from './routes/driverVehicleRoutes.js';
+import driverKycRoutes from './routes/driverKycRoutes.js';
 import { connectDB } from './config/db.js';
 import { initUserTable } from './models/userModel.js';
 import { initVehicleTypeTable } from './models/vehicleTypeModel.js';
 import { initLoadTable } from './models/loadModel.js';
 import { initDriverVehicleTable } from './models/driverVehicleModel.js';
+import { initDriverKycTable } from './models/driverKycModel.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +23,7 @@ connectDB().then(() => {
     initVehicleTypeTable();
     initLoadTable();
     initDriverVehicleTable();
+    initDriverKycTable();
 });
 
 // Middleware to parse JSON bodies
@@ -43,6 +46,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/vehicle-types', vehicleTypeRoutes);
 app.use('/api/loads', loadRoutes);
 app.use('/api/driver/vehicle', driverVehicleRoutes);
+app.use('/api/driver/kyc', driverKycRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {

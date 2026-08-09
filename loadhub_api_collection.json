@@ -1,0 +1,181 @@
+{
+  "info": {
+    "name": "Loadhub API Collection",
+    "description": "Auto-generated collection for Loadhub Backend endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.loadhub.in",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Home",
+      "item": [
+        {
+          "name": "Root Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/"
+          }
+        },
+        {
+          "name": "Get Home Data",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/data"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/register"
+          }
+        },
+        {
+          "name": "Verify Register OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/register/verify-otp"
+          }
+        },
+        {
+          "name": "Request Login OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/login/request-otp"
+          }
+        },
+        {
+          "name": "Verify Login OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/login/verify-otp"
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/profile/:id"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/users/profile/:id"
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/users/profile/:id"
+          }
+        },
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/users/location/:id"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehicle Types",
+      "item": [
+        {
+          "name": "Get Vehicle Types",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/vehicle-types/"
+          }
+        },
+        {
+          "name": "Add Vehicle Type",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/vehicle-types/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loads",
+      "item": [
+        {
+          "name": "Get All Loads",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/loads/"
+          }
+        },
+        {
+          "name": "Post Load",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/loads/"
+          }
+        },
+        {
+          "name": "Get User Loads",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/loads/user/:user_id"
+          }
+        },
+        {
+          "name": "Get Matching Vehicles for Load",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/loads/:load_id/matching-vehicles"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Driver Vehicles",
+      "item": [
+        {
+          "name": "Get Driver Vehicles",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/driver/vehicle/get/:driver_id"
+          }
+        },
+        {
+          "name": "Add Driver Vehicle",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/driver/vehicle/add"
+          }
+        },
+        {
+          "name": "Edit Driver Vehicle",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/driver/vehicle/edit/:id"
+          }
+        },
+        {
+          "name": "Delete Driver Vehicle",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/driver/vehicle/delete/:id"
+          }
+        }
+      ]
+    }
+  ]
+}
