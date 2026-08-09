@@ -23,9 +23,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', upload.any(), createDriverVehicle);
-router.get('/driver/:driver_id', getDriverVehicles);
-router.put('/:id', upload.any(), editDriverVehicle);
-router.delete('/:id', removeDriverVehicle);
+// Add a new driver vehicle
+router.post('/add', upload.any(), createDriverVehicle);
+
+// Get all vehicles for a specific driver
+router.get('/get/:driver_id', getDriverVehicles);
+
+// Edit (Update) a driver's vehicle details
+router.put('/edit/:id', upload.any(), editDriverVehicle);
+
+// Delete a driver's vehicle
+router.delete('/delete/:id', removeDriverVehicle);
 
 export default router;
