@@ -7,13 +7,14 @@ export const initUserTable = async () => {
             id INT AUTO_INCREMENT PRIMARY KEY,
             full_name VARCHAR(255) NOT NULL,
             company_name VARCHAR(255),
-            mobile_number VARCHAR(20) UNIQUE NOT NULL,
+            mobile_number VARCHAR(20) NOT NULL,
             email VARCHAR(255),
             role VARCHAR(50) DEFAULT 'merchant partner',
             current_lat DECIMAL(10, 8),
             current_lng DECIMAL(11, 8),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_mobile_role (mobile_number, role)
         );
     `;
     try {
@@ -28,6 +29,18 @@ export const initUserTable = async () => {
         } catch (e) {
             // Ignore if columns already exist
         }
+
+        try {
+            // Attempt to drop the default UNIQUE constraint created on just mobile_number
+            await pool.query('ALTER TABLE users DROP INDEX mobile_number;');
+            console.log('✅ Dropped old unique constraint on mobile_number');
+        } catch (e) {}
+        
+        try {
+            // Attempt to add the composite unique constraint
+            await pool.query('ALTER TABLE users ADD UNIQUE KEY unique_mobile_role (mobile_number, role);');
+            console.log('✅ Added composite unique constraint on (mobile_number, role)');
+        } catch (e) {}
 
         const tempQuery = `
             CREATE TABLE IF NOT EXISTS temp_users (
@@ -65,6 +78,12 @@ export const createUser = async (userData) => {
 export const getUserByMobile = async (mobile_number) => {
     const query = `SELECT * FROM users WHERE mobile_number = ?;`;
     const [rows] = await pool.query(query, [mobile_number]);
+    return rows[0];
+};
+
+export const getUserByMobileAndRole = async (mobile_number, role) => {
+    const query = `SELECT * FROM users WHERE mobile_number = ? AND role = ?;`;
+    const [rows] = await pool.query(query, [mobile_number, role]);
     return rows[0];
 };
 

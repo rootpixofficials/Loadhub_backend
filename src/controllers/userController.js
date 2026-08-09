@@ -1,18 +1,19 @@
-import { createUser, getUserByMobile, createTempUser, getTempUserByMobile, deleteTempUser, updateUser, getUserById, deleteUser, updateUserLocation } from '../models/userModel.js';
+import { createUser, getUserByMobile, getUserByMobileAndRole, createTempUser, getTempUserByMobile, deleteTempUser, updateUser, getUserById, deleteUser, updateUserLocation } from '../models/userModel.js';
 import { generateTokens } from '../../token.js';
 
 export const registerUser = async (req, res) => {
     try {
         const { full_name, company_name, mobile_number, email, role } = req.body;
+        const defaultRole = role || 'merchant partner';
 
         if (!full_name || !mobile_number) {
             return res.status(400).json({ success: false, message: 'Full name and mobile number are required' });
         }
 
-        // Check if user already exists
-        const existingUser = await getUserByMobile(mobile_number);
+        // Check if user already exists with THIS specific role
+        const existingUser = await getUserByMobileAndRole(mobile_number, defaultRole);
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'User with this mobile number already exists' });
+            return res.status(400).json({ success: false, message: 'User with this mobile number and role already exists' });
         }
 
         const otp = '1234'; // Mocked OTP for testing
@@ -41,13 +42,9 @@ export const requestLoginOtp = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Mobile number and role are required' });
         }
         
-        const user = await getUserByMobile(mobile_number);
+        const user = await getUserByMobileAndRole(mobile_number, role);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        if (user.role !== role) {
-            return res.status(403).json({ success: false, message: 'Access denied: role mismatch' });
         }
 
         // In a real app, you would generate a random OTP, save it to DB/Redis, and send via SMS.
@@ -64,13 +61,13 @@ export const requestLoginOtp = async (req, res) => {
 
 export const verifyLoginOtp = async (req, res) => {
     try {
-        const { mobile_number, otp } = req.body;
+        const { mobile_number, otp, role } = req.body;
         
-        if (!mobile_number || !otp) {
-            return res.status(400).json({ success: false, message: 'Mobile number and OTP are required' });
+        if (!mobile_number || !otp || !role) {
+            return res.status(400).json({ success: false, message: 'Mobile number, role, and OTP are required' });
         }
 
-        const user = await getUserByMobile(mobile_number);
+        const user = await getUserByMobileAndRole(mobile_number, role);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -115,12 +112,13 @@ export const verifyRegisterOtp = async (req, res) => {
 
         // Depending on MySQL driver, JSON columns might be returned as string or object
         const userData = typeof tempUser.user_data === 'string' ? JSON.parse(tempUser.user_data) : tempUser.user_data;
+        const requestedRole = userData.role || 'merchant partner';
 
         // Verify again just in case
-        const existingUser = await getUserByMobile(mobile_number);
+        const existingUser = await getUserByMobileAndRole(mobile_number, requestedRole);
         if (existingUser) {
             await deleteTempUser(mobile_number);
-            return res.status(400).json({ success: false, message: 'User already exists' });
+            return res.status(400).json({ success: false, message: 'User already exists with this role' });
         }
 
         const newUser = await createUser(userData);
