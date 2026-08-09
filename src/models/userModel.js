@@ -124,7 +124,15 @@ export const updateUser = async (id, updateData) => {
 };
 
 export const getUserById = async (id) => {
-    const query = `SELECT * FROM users WHERE id = ?;`;
+    const query = `
+        SELECT 
+            u.*,
+            (SELECT COUNT(*) FROM trips t WHERE t.user_id = u.id) AS trips_posted,
+            COALESCE((SELECT SUM(price) FROM trips t WHERE t.user_id = u.id), 0) AS total_spend,
+            5.0 AS average_rating
+        FROM users u
+        WHERE u.id = ?;
+    `;
     const [rows] = await pool.query(query, [id]);
     return rows[0];
 };
