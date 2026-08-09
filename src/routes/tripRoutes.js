@@ -25,6 +25,6 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('goods_image'), postTrip);
 router.get('/', getTrips);
 router.get('/user/:user_id', getUserTrips);
-router.get('/:trip_id/matching-vehicles', getMatchingVehicles);
+router.post('/matching-vehicles', getMatchingVehicles);
 
 export default router;

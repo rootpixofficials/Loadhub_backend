@@ -1,4 +1,4 @@
-import { createTrip, getAllTrips, getTripsByUserId, getMatchingVehiclesForTrip } from '../models/tripModel.js';
+import { createTrip, getAllTrips, getTripsByUserId, getMatchingVehicles as getMatchingVehiclesModel } from '../models/tripModel.js';
 
 export const postTrip = async (req, res) => {
     try {
@@ -69,21 +69,23 @@ export const getUserTrips = async (req, res) => {
 
 export const getMatchingVehicles = async (req, res) => {
     try {
-        const { trip_id } = req.params;
+        const { pickup_lat, pickup_lng, drop_lat, drop_lng, vehicle_type_id, radius_km } = req.body;
 
-        if (!trip_id) {
-            return res.status(400).json({ success: false, message: 'Trip ID is required' });
+        if (!pickup_lat || !pickup_lng || !drop_lat || !drop_lng) {
+            return res.status(400).json({ success: false, message: 'Pickup and Drop coordinates (lat and lng) are required' });
         }
 
-        const vehicles = await getMatchingVehiclesForTrip(trip_id);
+        const radius = radius_km || 50;
+
+        const vehicles = await getMatchingVehiclesModel(pickup_lat, pickup_lng, drop_lat, drop_lng, vehicle_type_id, radius);
 
         res.status(200).json({
             success: true,
-            message: vehicles.length > 0 ? 'Matching vehicles found' : 'No matching vehicles found for this trip',
+            message: vehicles.length > 0 ? 'Matching vehicles found' : 'No matching vehicles found within radius',
             data: vehicles
         });
     } catch (error) {
         console.error('Error in getMatchingVehicles:', error);
-        res.status(500).json({ success: false, message: error.message === 'Trip not found' ? 'Trip not found' : 'Internal server error' });
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

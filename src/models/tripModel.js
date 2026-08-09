@@ -104,36 +104,61 @@ export const getTripsByUserId = async (user_id) => {
     return rows;
 };
 
-export const getMatchingVehiclesForTrip = async (trip_id) => {
-    // 1. Get the trip's vehicle requirement
-    const [trips] = await pool.query('SELECT vehicle_type_id FROM trips WHERE id = ?', [trip_id]);
-    if (!trips.length) {
-        throw new Error('Trip not found');
-    }
-    const trip = trips[0];
-    const { vehicle_type_id } = trip;
+export const getMatchingVehicles = async (pickup_lat, pickup_lng, drop_lat, drop_lng, vehicle_type_id, radius_km = 50) => {
+    // 1. Calculate the delivery distance in Node.js to save SQL complexity
+    const haversineDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Earth's radius in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    };
 
-    // 2. Query vehicles matching the trip's vehicle_type_id
+    const delivery_distance = haversineDistance(pickup_lat, pickup_lng, drop_lat, drop_lng);
+
+    // 2. Query vehicles near the pickup location
     let query = `
         SELECT 
-            u.id AS driver_id, u.full_name, u.mobile_number, u.current_lat, u.current_lng,
-            dv.id AS vehicle_id, dv.registration_number, dv.vehicle_model, dv.status AS vehicle_status,
-            vt.id AS vehicle_type_id, vt.name AS vehicle_name, vt.capacity AS max_weight
+            u.id AS driver_id, u.full_name, u.mobile_number,
+            dv.id AS vehicle_id, dv.registration_number, dv.vehicle_model, dv.status AS vehicle_status, dv.per_km_rate, dv.latitude, dv.longitude,
+            vt.id AS vehicle_type_id, vt.name AS vehicle_name, vt.capacity AS max_weight,
+            (6371 * acos(cos(radians(?)) * cos(radians(dv.latitude)) * cos(radians(dv.longitude) - radians(?)) + sin(radians(?)) * sin(radians(dv.latitude)))) AS distance_to_pickup
         FROM users u
         JOIN driver_vehicles dv ON u.id = dv.driver_id
         JOIN vehicle_types vt ON dv.vehicle_type_id = vt.id
-        WHERE u.role = 'merchant partner'
+        WHERE dv.latitude IS NOT NULL AND dv.longitude IS NOT NULL
+        AND dv.is_active = 'online'
     `;
     
-    const queryParams = [];
+    const queryParams = [pickup_lat, pickup_lng, pickup_lat];
 
     if (vehicle_type_id) {
         query += ` AND dv.vehicle_type_id = ?`;
         queryParams.push(vehicle_type_id);
     }
 
-    query += ` ORDER BY dv.id DESC`;
+    query += ` HAVING distance_to_pickup <= ? ORDER BY distance_to_pickup ASC`;
+    queryParams.push(radius_km);
 
     const [rows] = await pool.query(query, queryParams);
-    return rows;
+
+    // 3. Map the results to add the total distance and calculated price
+    return rows.map(row => {
+        const total_distance = row.distance_to_pickup + delivery_distance;
+        // Use vehicle's per_km_rate. Default to 0 if not set.
+        const rate = parseFloat(row.per_km_rate) || 0;
+        const estimated_price = total_distance * rate;
+        
+        return {
+            ...row,
+            delivery_distance: parseFloat(delivery_distance.toFixed(2)),
+            distance_to_pickup: parseFloat(row.distance_to_pickup.toFixed(2)),
+            total_distance: parseFloat(total_distance.toFixed(2)),
+            estimated_price: parseFloat(estimated_price.toFixed(2))
+        };
+    });
 };
