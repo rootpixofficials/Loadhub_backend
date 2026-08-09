@@ -2,14 +2,13 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { postLoad, getLoads, getUserLoads, getMatchingVehicles } from '../controllers/loadController.js';
+import { postTrip, getTrips, getUserTrips, getMatchingVehicles } from '../controllers/tripController.js';
 
 const router = express.Router();
 
-// Setup multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = 'uploads/loads/';
+        const dir = 'uploads/trips/';
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir, { recursive: true });
         }
@@ -23,9 +22,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', upload.any(), postLoad);
-router.get('/', getLoads);
-router.get('/user/:user_id', getUserLoads);
-router.get('/:load_id/matching-vehicles', getMatchingVehicles);
+router.post('/', upload.single('goods_image'), postTrip);
+router.get('/', getTrips);
+router.get('/user/:user_id', getUserTrips);
+router.get('/:trip_id/matching-vehicles', getMatchingVehicles);
 
 export default router;
