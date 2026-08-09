@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { createDriverVehicle, getDriverVehicles, editDriverVehicle, removeDriverVehicle } from '../controllers/driverVehicleController.js';
+import { createDriverVehicle, getDriverVehicles, editDriverVehicle, removeDriverVehicle, updateActiveStatus } from '../controllers/driverVehicleController.js';
 
 const router = express.Router();
 
@@ -34,5 +34,8 @@ router.put('/edit/:id', upload.any(), editDriverVehicle);
 
 // Delete a driver's vehicle
 router.delete('/delete/:id', removeDriverVehicle);
+
+// Update vehicle active/online status
+router.put('/status/:id', updateActiveStatus);
 
 export default router;

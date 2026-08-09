@@ -1,4 +1,4 @@
-import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDriverVehicle } from '../models/driverVehicleModel.js';
+import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDriverVehicle, updateVehicleActiveStatus } from '../models/driverVehicleModel.js';
 
 export const createDriverVehicle = async (req, res) => {
     try {
@@ -114,6 +114,32 @@ export const removeDriverVehicle = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in removeDriverVehicle:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const updateActiveStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_active } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'Vehicle ID is required' });
+        }
+
+        if (is_active === undefined) {
+            return res.status(400).json({ success: false, message: 'is_active field is required' });
+        }
+
+        const updatedVehicle = await updateVehicleActiveStatus(id, is_active);
+
+        res.status(200).json({
+            success: true,
+            message: `Vehicle status updated to ${is_active}`,
+            data: updatedVehicle
+        });
+    } catch (error) {
+        console.error('Error in updateActiveStatus:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

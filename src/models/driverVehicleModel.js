@@ -14,6 +14,7 @@ export const initDriverVehicleTable = async () => {
             location VARCHAR(255),
             latitude DECIMAL(10, 8),
             longitude DECIMAL(11, 8),
+            is_active VARCHAR(50) DEFAULT 'offline',
             status VARCHAR(50) DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -27,6 +28,7 @@ export const initDriverVehicleTable = async () => {
         try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN location VARCHAR(255);'); } catch (e) {}
         try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN latitude DECIMAL(10,8);'); } catch (e) {}
         try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN longitude DECIMAL(11,8);'); } catch (e) {}
+        try { await pool.query('ALTER TABLE driver_vehicles ADD COLUMN is_active VARCHAR(50) DEFAULT "offline";'); } catch (e) {}
         console.log('✅ Ensured all new columns exist in driver_vehicles');
     } catch (err) {
         console.error('❌ Error initializing Driver Vehicles table:', err.message);
@@ -106,4 +108,15 @@ export const updateDriverVehicle = async (id, updateData) => {
 export const deleteDriverVehicle = async (id) => {
     const query = `DELETE FROM driver_vehicles WHERE id = ?;`;
     await pool.query(query, [id]);
+};
+
+export const updateVehicleActiveStatus = async (id, is_active) => {
+    const query = `
+        UPDATE driver_vehicles 
+        SET is_active = ?
+        WHERE id = ?
+    `;
+    await pool.query(query, [is_active, id]);
+    const [rows] = await pool.query('SELECT * FROM driver_vehicles WHERE id = ?', [id]);
+    return rows[0];
 };
