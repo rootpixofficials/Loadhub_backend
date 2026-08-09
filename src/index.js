@@ -5,6 +5,7 @@ import homeRoutes from './routes/homeRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import vehicleTypeRoutes from './routes/vehicleTypeRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
+import transactionRoutes from './routes/transactionRoutes.js';
 import driverVehicleRoutes from './routes/driverVehicleRoutes.js';
 import driverKycRoutes from './routes/driverKycRoutes.js';
 import { connectDB } from './config/db.js';
@@ -13,6 +14,7 @@ import { initVehicleTypeTable } from './models/vehicleTypeModel.js';
 import { initTripTable } from './models/tripModel.js';
 import { initDriverVehicleTable } from './models/driverVehicleModel.js';
 import { initDriverKycTable } from './models/driverKycModel.js';
+import { initTransactionTable } from './models/transactionModel.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +26,7 @@ connectDB().then(() => {
     initTripTable();
     initDriverVehicleTable();
     initDriverKycTable();
+    initTransactionTable();
 });
 
 // Middleware to parse JSON bodies
@@ -45,6 +48,7 @@ app.use('/api', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicle-types', vehicleTypeRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/transactions', transactionRoutes);
 app.use('/api/driver/vehicle', driverVehicleRoutes);
 app.use('/api/driver/kyc', driverKycRoutes);
 
