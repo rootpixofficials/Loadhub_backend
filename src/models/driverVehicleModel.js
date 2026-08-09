@@ -120,3 +120,14 @@ export const updateVehicleActiveStatus = async (id, is_active) => {
     const [rows] = await pool.query('SELECT * FROM driver_vehicles WHERE id = ?', [id]);
     return rows[0];
 };
+
+export const updateVehicleLocation = async (id, latitude, longitude, location) => {
+    const query = `
+        UPDATE driver_vehicles 
+        SET latitude = ?, longitude = ?, location = COALESCE(?, location)
+        WHERE id = ?
+    `;
+    await pool.query(query, [latitude, longitude, location || null, id]);
+    const [rows] = await pool.query('SELECT * FROM driver_vehicles WHERE id = ?', [id]);
+    return rows[0];
+};

@@ -1,4 +1,4 @@
-import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDriverVehicle, updateVehicleActiveStatus } from '../models/driverVehicleModel.js';
+import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDriverVehicle, updateVehicleActiveStatus, updateVehicleLocation } from '../models/driverVehicleModel.js';
 
 export const createDriverVehicle = async (req, res) => {
     try {
@@ -140,6 +140,32 @@ export const updateActiveStatus = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in updateActiveStatus:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const updateLocation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { latitude, longitude, location } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'Vehicle ID is required' });
+        }
+
+        if (latitude === undefined || longitude === undefined) {
+            return res.status(400).json({ success: false, message: 'latitude and longitude are required' });
+        }
+
+        const updatedVehicle = await updateVehicleLocation(id, latitude, longitude, location);
+
+        res.status(200).json({
+            success: true,
+            message: 'Vehicle location updated successfully',
+            data: updatedVehicle
+        });
+    } catch (error) {
+        console.error('Error in updateLocation:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
