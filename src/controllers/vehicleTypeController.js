@@ -12,10 +12,10 @@ export const addVehicleType = async (req, res) => {
         
         if (req.files && req.files.length > 0) {
             const file = req.files[0];
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             vehicle_type_image = `${baseUrl}/uploads/vehicles/${file.filename}`;
         } else if (req.file) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             vehicle_type_image = `${baseUrl}/uploads/vehicles/${req.file.filename}`;
         }
 

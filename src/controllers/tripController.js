@@ -10,7 +10,7 @@ export const postTrip = async (req, res) => {
 
         let goods_image = null;
         if (req.file) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             goods_image = `${baseUrl}/uploads/trips/${req.file.filename}`;
         }
 
