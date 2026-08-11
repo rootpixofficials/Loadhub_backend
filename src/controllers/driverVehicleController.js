@@ -2,7 +2,7 @@ import { addDriverVehicle, getVehiclesByDriverId, updateDriverVehicle, deleteDri
 
 export const createDriverVehicle = async (req, res) => {
     try {
-        let { driver_id, vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, per_km_rate, location, latitude, longitude } = req.body;
+        let { driver_id, vehicle_type_id, registration_number, vehicle_model, insurance_valid_until, per_km_rate, location, latitude, longitude, status } = req.body;
 
         if (!driver_id || !vehicle_type_id || !registration_number || !vehicle_model) {
             return res.status(400).json({ success: false, message: 'Driver ID, Vehicle Type ID, Registration Number, and Vehicle Model are required' });
@@ -12,7 +12,7 @@ export const createDriverVehicle = async (req, res) => {
         let rc_certificate = null;
 
         if (req.files && req.files.length > 0) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             req.files.forEach(file => {
                 if (file.fieldname === 'insurance_certificate') {
                     insurance_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;
@@ -24,8 +24,8 @@ export const createDriverVehicle = async (req, res) => {
 
         const newVehicle = await addDriverVehicle({
             driver_id, vehicle_type_id, registration_number, 
-            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
-            location, latitude, longitude
+            vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate,
+            per_km_rate, location, latitude, longitude, status
         });
 
         res.status(201).json({
@@ -71,7 +71,7 @@ export const editDriverVehicle = async (req, res) => {
         let rc_certificate = null;
 
         if (req.files && req.files.length > 0) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             req.files.forEach(file => {
                 if (file.fieldname === 'insurance_certificate') {
                     insurance_certificate = `${baseUrl}/uploads/driver_vehicles/${file.filename}`;

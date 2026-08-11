@@ -29,19 +29,19 @@ export const initDriverKycTable = async () => {
 export const addDriverKyc = async (data) => {
     const { 
         driver_id, aadhaar_number, aadhaar_image, pan_number, 
-        pan_image, license_number, license_expiry, license_image 
+        pan_image, license_number, license_expiry, license_image, status 
     } = data;
 
     const query = `
         INSERT INTO driver_kyc (
             driver_id, aadhaar_number, aadhaar_image, pan_number, 
-            pan_image, license_number, license_expiry, license_image
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            pan_image, license_number, license_expiry, license_image, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
         driver_id, aadhaar_number || null, aadhaar_image || null, 
         pan_number || null, pan_image || null, license_number || null, 
-        license_expiry || null, license_image || null
+        license_expiry || null, license_image || null, status || 'pending'
     ];
     
     try {

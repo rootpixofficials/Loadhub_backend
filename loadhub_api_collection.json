@@ -38,56 +38,110 @@
           "name": "Register User",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/users/register"
+            "url": "{{base_url}}/api/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"John Doe\",\n  \"company_name\": \"Acme Corp\",\n  \"mobile_number\": \"1234567890\",\n  \"email\": \"john@example.com\",\n  \"role\": \"merchant partner\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
           "name": "Verify Register OTP",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/users/register/verify-otp"
+            "url": "{{base_url}}/api/users/register/verify-otp",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_number\": \"1234567890\",\n  \"otp\": \"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
           "name": "Request Login OTP",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/users/login/request-otp"
+            "url": "{{base_url}}/api/users/login/request-otp",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_number\": \"1234567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
           "name": "Verify Login OTP",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/users/login/verify-otp"
+            "url": "{{base_url}}/api/users/login/verify-otp",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_number\": \"1234567890\",\n  \"otp\": \"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
           "name": "Get Profile",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/users/profile/:id"
+            "url": "{{base_url}}/api/users/profile/1"
           }
         },
         {
           "name": "Update Profile",
           "request": {
             "method": "PUT",
-            "url": "{{base_url}}/api/users/profile/:id"
+            "url": "{{base_url}}/api/users/profile/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Jane Doe\",\n  \"company_name\": \"Acme Inc\",\n  \"email\": \"jane@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
           "name": "Delete Account",
           "request": {
             "method": "DELETE",
-            "url": "{{base_url}}/api/users/profile/:id"
+            "url": "{{base_url}}/api/users/profile/1"
           }
         },
         {
           "name": "Update Location",
           "request": {
             "method": "PUT",
-            "url": "{{base_url}}/api/users/location/:id"
+            "url": "{{base_url}}/api/users/location/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lat\": 12.9716,\n  \"lng\": 77.5946\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         }
       ]
@@ -106,40 +160,177 @@
           "name": "Add Vehicle Type",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/vehicle-types/"
+            "url": "{{base_url}}/api/vehicle-types/",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Mini Truck",
+                  "type": "text"
+                },
+                {
+                  "key": "capacity",
+                  "value": "1000kg",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Small goods delivery",
+                  "type": "text"
+                },
+                {
+                  "key": "vehicle_type_image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
           }
         }
       ]
     },
     {
-      "name": "Loads",
+      "name": "Trips",
       "item": [
         {
-          "name": "Get All Loads",
+          "name": "Get All Trips",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/loads/"
+            "url": "{{base_url}}/api/trips/"
           }
         },
         {
-          "name": "Post Load",
+          "name": "Post Trip",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/loads/"
+            "url": "{{base_url}}/api/trips/",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "pickup_location",
+                  "value": "Delhi, India",
+                  "type": "text"
+                },
+                {
+                  "key": "pickup_lat",
+                  "value": "28.7041",
+                  "type": "text"
+                },
+                {
+                  "key": "pickup_lng",
+                  "value": "77.1025",
+                  "type": "text"
+                },
+                {
+                  "key": "drop_location",
+                  "value": "Mumbai, India",
+                  "type": "text"
+                },
+                {
+                  "key": "drop_lat",
+                  "value": "19.0760",
+                  "type": "text"
+                },
+                {
+                  "key": "drop_lng",
+                  "value": "72.8777",
+                  "type": "text"
+                },
+                {
+                  "key": "vehicle_type_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "trip_type",
+                  "value": "Standard",
+                  "type": "text"
+                },
+                {
+                  "key": "approx_weight",
+                  "value": "500kg",
+                  "type": "text"
+                },
+                {
+                  "key": "driver_id",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "estimated_fare",
+                  "value": "1500.00",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "1500.00",
+                  "type": "text"
+                },
+                {
+                  "key": "goods_image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
           }
         },
         {
-          "name": "Get User Loads",
+          "name": "Get User Trips",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/loads/user/:user_id"
+            "url": "{{base_url}}/api/trips/user/1"
           }
         },
         {
-          "name": "Get Matching Vehicles for Load",
+          "name": "Get Matching Vehicles for Trip",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/trips/matching-vehicles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup_lat\": 28.7041,\n  \"pickup_lng\": 77.1025,\n  \"drop_lat\": 19.0760,\n  \"drop_lng\": 72.8777,\n  \"vehicle_type_id\": 1,\n  \"radius_km\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Upsert Transaction",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/transactions/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trip_id\": 1,\n  \"payment_type\": \"Cash\",\n  \"amount\": 1500.00,\n  \"status\": \"Paid\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Earnings Dashboard",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/loads/:load_id/matching-vehicles"
+            "url": "{{base_url}}/api/transactions/earnings/1"
           }
         }
       ]
@@ -151,28 +342,231 @@
           "name": "Get Driver Vehicles",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/driver/vehicle/get/:driver_id"
+            "url": "{{base_url}}/api/driver/vehicle/get/1"
           }
         },
         {
           "name": "Add Driver Vehicle",
           "request": {
             "method": "POST",
-            "url": "{{base_url}}/api/driver/vehicle/add"
+            "url": "{{base_url}}/api/driver/vehicle/add",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "driver_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "vehicle_type_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "registration_number",
+                  "value": "DL-14-1234",
+                  "type": "text"
+                },
+                {
+                  "key": "vehicle_model",
+                  "value": "Tata Ace",
+                  "type": "text"
+                },
+                {
+                  "key": "insurance_valid_until",
+                  "value": "2025-12-31",
+                  "type": "text"
+                },
+                {
+                  "key": "per_km_rate",
+                  "value": "15.5",
+                  "type": "text"
+                },
+                {
+                  "key": "location",
+                  "value": "Delhi, India",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "28.6139",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "77.2090",
+                  "type": "text"
+                },
+                {
+                  "key": "insurance_certificate",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "rc_certificate",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
           }
         },
         {
           "name": "Edit Driver Vehicle",
           "request": {
             "method": "PUT",
-            "url": "{{base_url}}/api/driver/vehicle/edit/:id"
+            "url": "{{base_url}}/api/driver/vehicle/edit/1",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "vehicle_type_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "registration_number",
+                  "value": "DL-14-5678",
+                  "type": "text"
+                },
+                {
+                  "key": "vehicle_model",
+                  "value": "Mahindra Bolero",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "approved",
+                  "type": "text"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Delete Driver Vehicle",
           "request": {
             "method": "DELETE",
-            "url": "{{base_url}}/api/driver/vehicle/delete/:id"
+            "url": "{{base_url}}/api/driver/vehicle/delete/1"
+          }
+        },
+        {
+          "name": "Update Vehicle Active Status",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/driver/vehicle/status/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": \"online\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Vehicle Location",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/driver/vehicle/location/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 28.6139,\n  \"longitude\": 77.2090,\n  \"location\": \"Delhi, India\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Driver KYC",
+      "item": [
+        {
+          "name": "Add Driver KYC",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/driver/kyc/add",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "driver_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "aadhaar_number",
+                  "value": "123456789012",
+                  "type": "text"
+                },
+                {
+                  "key": "pan_number",
+                  "value": "ABCDE1234F",
+                  "type": "text"
+                },
+                {
+                  "key": "license_number",
+                  "value": "DL1420110012345",
+                  "type": "text"
+                },
+                {
+                  "key": "license_expiry",
+                  "value": "2030-01-01",
+                  "type": "text"
+                },
+                {
+                  "key": "aadhaar_image",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "pan_image",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "license_image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Driver KYC",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/driver/kyc/get/1"
+          }
+        },
+        {
+          "name": "Edit Driver KYC",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/driver/kyc/edit/1",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "aadhaar_number",
+                  "value": "987654321098",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "approved",
+                  "type": "text"
+                }
+              ]
+            }
           }
         }
       ]

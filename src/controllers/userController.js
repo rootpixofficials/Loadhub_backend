@@ -93,7 +93,7 @@ export const verifyLoginOtp = async (req, res) => {
     }
 };
 
-export const verifyRegisterOtp = async (req, res) => {
+export const    verifyRegisterOtp = async (req, res) => {
     try {
         const { mobile_number, otp } = req.body;
         

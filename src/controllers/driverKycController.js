@@ -2,7 +2,7 @@ import { addDriverKyc, getKycByDriverId, updateDriverKyc } from '../models/drive
 
 export const createDriverKyc = async (req, res) => {
     try {
-        let { driver_id, aadhaar_number, pan_number, license_number, license_expiry } = req.body;
+        let { driver_id, aadhaar_number, pan_number, license_number, license_expiry, status } = req.body;
 
         if (!driver_id) {
             return res.status(400).json({ success: false, message: 'Driver ID is required' });
@@ -19,7 +19,7 @@ export const createDriverKyc = async (req, res) => {
         let license_image = null;
 
         if (req.files && req.files.length > 0) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             req.files.forEach(file => {
                 if (file.fieldname === 'aadhaar_image') {
                     aadhaar_image = `${baseUrl}/uploads/kyc/${file.filename}`;
@@ -33,7 +33,7 @@ export const createDriverKyc = async (req, res) => {
 
         const newKyc = await addDriverKyc({
             driver_id, aadhaar_number, aadhaar_image, pan_number, 
-            pan_image, license_number, license_expiry, license_image
+            pan_image, license_number, license_expiry, license_image, status
         });
 
         res.status(201).json({
@@ -90,7 +90,7 @@ export const editDriverKyc = async (req, res) => {
         let license_image = null;
 
         if (req.files && req.files.length > 0) {
-            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.BASE_URL || 'https://api.loadhub.in';
             req.files.forEach(file => {
                 if (file.fieldname === 'aadhaar_image') {
                     aadhaar_image = `${baseUrl}/uploads/kyc/${file.filename}`;

@@ -39,21 +39,21 @@ export const addDriverVehicle = async (data) => {
     const { 
         driver_id, vehicle_type_id, registration_number, 
         vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
-        location, latitude, longitude
+        location, latitude, longitude, status
     } = data;
 
     const query = `
         INSERT INTO driver_vehicles (
             driver_id, vehicle_type_id, registration_number, 
             vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
-            location, latitude, longitude
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            location, latitude, longitude, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
         driver_id, vehicle_type_id, registration_number, 
         vehicle_model, insurance_valid_until || null, 
         insurance_certificate || null, rc_certificate || null, per_km_rate || null,
-        location || null, latitude || null, longitude || null
+        location || null, latitude || null, longitude || null, status || 'pending'
     ];
     
     try {
