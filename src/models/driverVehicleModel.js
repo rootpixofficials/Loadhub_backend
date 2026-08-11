@@ -45,22 +45,21 @@ export const addDriverVehicle = async (data) => {
     const { 
         driver_id, vehicle_type_id, registration_number, 
         vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
-        location, latitude, longitude, status, basic_location, basic_latitude, basic_longitude
+        status, basic_location, basic_latitude, basic_longitude
     } = data;
 
     const query = `
         INSERT INTO driver_vehicles (
             driver_id, vehicle_type_id, registration_number, 
             vehicle_model, insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate,
-            location, latitude, longitude, status, basic_location, basic_latitude, basic_longitude
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            status, basic_location, basic_latitude, basic_longitude
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
         driver_id, vehicle_type_id, registration_number, 
         vehicle_model, insurance_valid_until || null, 
         insurance_certificate || null, rc_certificate || null, per_km_rate || null,
-        location || null, latitude || null, longitude || null, status || 'pending',
-        basic_location || null, basic_latitude || null, basic_longitude || null
+        status || 'pending', basic_location || null, basic_latitude || null, basic_longitude || null
     ];
     
     try {
@@ -82,7 +81,7 @@ export const updateDriverVehicle = async (id, updateData) => {
     const { 
         vehicle_type_id, registration_number, vehicle_model, 
         insurance_valid_until, insurance_certificate, rc_certificate, per_km_rate, status,
-        location, latitude, longitude, basic_location, basic_latitude, basic_longitude
+        basic_location, basic_latitude, basic_longitude
     } = updateData;
 
     const query = `
@@ -94,9 +93,6 @@ export const updateDriverVehicle = async (id, updateData) => {
             insurance_certificate = COALESCE(?, insurance_certificate),
             rc_certificate = COALESCE(?, rc_certificate),
             per_km_rate = COALESCE(?, per_km_rate),
-            location = COALESCE(?, location),
-            latitude = COALESCE(?, latitude),
-            longitude = COALESCE(?, longitude),
             status = COALESCE(?, status),
             basic_location = COALESCE(?, basic_location),
             basic_latitude = COALESCE(?, basic_latitude),
@@ -108,7 +104,7 @@ export const updateDriverVehicle = async (id, updateData) => {
         vehicle_type_id || null, registration_number || null, 
         vehicle_model || null, insurance_valid_until || null, 
         insurance_certificate || null, rc_certificate || null, 
-        per_km_rate || null, location || null, latitude || null, longitude || null, status || null, 
+        per_km_rate || null, status || null, 
         basic_location || null, basic_latitude || null, basic_longitude || null, id
     ]);
     
