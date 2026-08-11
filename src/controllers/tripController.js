@@ -1,4 +1,4 @@
-import { createTrip, getAllTrips, getTripsByUserId, getMatchingVehicles as getMatchingVehiclesModel } from '../models/tripModel.js';
+import { createTrip, getAllTrips, getTripsByUserId, getMatchingVehicles as getMatchingVehiclesModel, updateTripStatus } from '../models/tripModel.js';
 
 export const postTrip = async (req, res) => {
     try {
@@ -87,6 +87,27 @@ export const getMatchingVehicles = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in getMatchingVehicles:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export const updateTripStatusController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        if (!id || !status) {
+            return res.status(400).json({ success: false, message: 'Trip ID and Status are required' });
+        }
+
+        const updatedTrip = await updateTripStatus(id, status);
+        res.status(200).json({
+            success: true,
+            message: 'Trip status updated successfully',
+            data: updatedTrip
+        });
+    } catch (error) {
+        console.error('Error in updateTripStatusController:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

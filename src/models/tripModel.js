@@ -170,3 +170,10 @@ export const getMatchingVehicles = async (pickup_lat, pickup_lng, drop_lat, drop
         };
     });
 };
+
+export const updateTripStatus = async (id, status) => {
+    const query = `UPDATE trips SET status = ? WHERE id = ?`;
+    await pool.query(query, [status, id]);
+    const [rows] = await pool.query('SELECT * FROM trips WHERE id = ?', [id]);
+    return rows[0];
+};

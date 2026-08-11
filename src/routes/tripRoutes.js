@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { postTrip, getTrips, getUserTrips, getMatchingVehicles } from '../controllers/tripController.js';
+import { postTrip, getTrips, getUserTrips, getMatchingVehicles, updateTripStatusController } from '../controllers/tripController.js';
 
 const router = express.Router();
 
@@ -26,5 +26,6 @@ router.post('/', upload.single('goods_image'), postTrip);
 router.get('/', getTrips);
 router.get('/user/:user_id', getUserTrips);
 router.post('/matching-vehicles', getMatchingVehicles);
+router.put('/status/:id', updateTripStatusController);
 
 export default router;
