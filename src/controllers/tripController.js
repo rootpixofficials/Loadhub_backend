@@ -5,7 +5,7 @@ export const postTrip = async (req, res) => {
         const { 
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            trip_type, approx_weight, driver_id, estimated_fare, price
+            trip_type, approx_weight, driver_id, vehicle_id, estimated_fare, price
         } = req.body;
 
         let goods_image = null;
@@ -21,7 +21,7 @@ export const postTrip = async (req, res) => {
         const newTrip = await createTrip({ 
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            trip_type, approx_weight, goods_image, driver_id, estimated_fare, price
+            trip_type, approx_weight, goods_image, driver_id, vehicle_id, estimated_fare, price
         });
 
         res.status(201).json({
@@ -51,13 +51,13 @@ export const getTrips = async (req, res) => {
 export const getUserTrips = async (req, res) => {
     try {
         const { user_id } = req.params;
-        const { date } = req.query;
+        const { date, role } = req.query;
         
         if (!user_id) {
             return res.status(400).json({ success: false, message: 'User ID is required' });
         }
 
-        const trips = await getTripsByUserId(user_id, date);
+        const trips = await getTripsByUserId(user_id, date, role);
         res.status(200).json({
             success: true,
             data: trips

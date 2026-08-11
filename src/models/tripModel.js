@@ -28,6 +28,7 @@ export const initTripTable = async () => {
             approx_weight VARCHAR(255),
             goods_image VARCHAR(255),
             driver_id INT,
+            vehicle_id INT,
             estimated_fare DECIMAL(10, 2),
             price DECIMAL(10, 2),
             status VARCHAR(50) DEFAULT 'pending',
@@ -54,6 +55,11 @@ export const initTripTable = async () => {
             console.log('✅ Added price column to trips table');
         } catch (e) {}
 
+        try {
+            await pool.query('ALTER TABLE trips ADD COLUMN vehicle_id INT;');
+            console.log('✅ Added vehicle_id column to trips table');
+        } catch (e) {}
+
     } catch (err) {
         console.error('❌ Error initializing Trips table:', err.message);
     }
@@ -63,15 +69,15 @@ export const createTrip = async (data) => {
     const { 
         user_id, pickup_location, pickup_lat, pickup_lng, 
         drop_location, drop_lat, drop_lng, vehicle_type_id, 
-        trip_type, approx_weight, goods_image, driver_id, estimated_fare, price
+        trip_type, approx_weight, goods_image, driver_id, vehicle_id, estimated_fare, price
     } = data;
 
     const query = `
         INSERT INTO trips (
             user_id, pickup_location, pickup_lat, pickup_lng, 
             drop_location, drop_lat, drop_lng, vehicle_type_id, 
-            trip_type, approx_weight, goods_image, driver_id, estimated_fare, price
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            trip_type, approx_weight, goods_image, driver_id, vehicle_id, estimated_fare, price
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     
     const values = [
@@ -80,7 +86,7 @@ export const createTrip = async (data) => {
         drop_location, drop_lat, drop_lng, 
         vehicle_type_id || null, 
         trip_type || null, approx_weight || null, goods_image || null,
-        driver_id || null, estimated_fare || null, price || null
+        driver_id || null, vehicle_id || null, estimated_fare || null, price || null
     ];
     
     try {
@@ -98,16 +104,38 @@ export const getAllTrips = async () => {
     return rows;
 };
 
-export const getTripsByUserId = async (user_id, date) => {
-    let query = `SELECT * FROM trips WHERE user_id = ?`;
+export const getTripsByUserId = async (user_id, date, role) => {
+    let query = '';
     const params = [user_id];
     
+    if (role === 'driver') {
+        query = `
+            SELECT t.*, 
+                   u.full_name as merchant_name, u.mobile_number as merchant_mobile, u.company_name as merchant_company,
+                   v.registration_number, v.vehicle_model
+            FROM trips t
+            LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN driver_vehicles v ON t.vehicle_id = v.id
+            WHERE t.driver_id = ?
+        `;
+    } else {
+        query = `
+            SELECT t.*, 
+                   u.full_name as driver_name, u.mobile_number as driver_mobile,
+                   v.registration_number, v.vehicle_model
+            FROM trips t
+            LEFT JOIN users u ON t.driver_id = u.id
+            LEFT JOIN driver_vehicles v ON t.vehicle_id = v.id
+            WHERE t.user_id = ?
+        `;
+    }
+    
     if (date) {
-        query += ` AND DATE(created_at) = ?`;
+        query += ` AND DATE(t.created_at) = ?`;
         params.push(date);
     }
     
-    query += ` ORDER BY id DESC;`;
+    query += ` ORDER BY t.id DESC;`;
     const [rows] = await pool.query(query, params);
     return rows;
 };
