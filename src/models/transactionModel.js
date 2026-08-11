@@ -66,7 +66,7 @@ export const getDriverEarnings = async (driver_id) => {
         LIMIT 10
     `;
     
-    const [payoutRows] = await pool.query(payoutQuery, [driver_id]);
+    const [payoutRows] = await pool.query(payoutsQuery, [driver_id]);
 
     return {
         total_wallet_balance: parseFloat(stats.total_wallet_balance).toFixed(2),
