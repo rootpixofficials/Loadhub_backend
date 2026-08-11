@@ -7,9 +7,16 @@ const pool = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     database: process.env.DB_NAME,
+    timezone: '+05:30',
+    dateStrings: true,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+});
+
+// Ensure every new connection sets the MySQL server time zone to IST (+05:30)
+pool.on('connection', function (connection) {
+    connection.query('SET time_zone = "+05:30";');
 });
 
 // Function to test the connection when server starts

@@ -264,6 +264,11 @@
                   "type": "text"
                 },
                 {
+                  "key": "vehicle_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
                   "key": "estimated_fare",
                   "value": "1500.00",
                   "type": "text"
@@ -286,7 +291,7 @@
           "name": "Get User Trips",
           "request": {
             "method": "GET",
-            "url": "{{base_url}}/api/trips/user/1"
+            "url": "{{base_url}}/api/trips/user/1?role=driver&date=2024-01-01"
           }
         },
         {
