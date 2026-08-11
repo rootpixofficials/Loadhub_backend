@@ -51,12 +51,13 @@ export const getTrips = async (req, res) => {
 export const getUserTrips = async (req, res) => {
     try {
         const { user_id } = req.params;
+        const { date } = req.query;
         
         if (!user_id) {
             return res.status(400).json({ success: false, message: 'User ID is required' });
         }
 
-        const trips = await getTripsByUserId(user_id);
+        const trips = await getTripsByUserId(user_id, date);
         res.status(200).json({
             success: true,
             data: trips

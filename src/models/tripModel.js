@@ -98,9 +98,17 @@ export const getAllTrips = async () => {
     return rows;
 };
 
-export const getTripsByUserId = async (user_id) => {
-    const query = `SELECT * FROM trips WHERE user_id = ? ORDER BY id DESC;`;
-    const [rows] = await pool.query(query, [user_id]);
+export const getTripsByUserId = async (user_id, date) => {
+    let query = `SELECT * FROM trips WHERE user_id = ?`;
+    const params = [user_id];
+    
+    if (date) {
+        query += ` AND DATE(created_at) = ?`;
+        params.push(date);
+    }
+    
+    query += ` ORDER BY id DESC;`;
+    const [rows] = await pool.query(query, params);
     return rows;
 };
 

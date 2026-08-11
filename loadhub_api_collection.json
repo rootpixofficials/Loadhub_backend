@@ -384,21 +384,6 @@
                   "type": "text"
                 },
                 {
-                  "key": "location",
-                  "value": "Delhi, India",
-                  "type": "text"
-                },
-                {
-                  "key": "latitude",
-                  "value": "28.6139",
-                  "type": "text"
-                },
-                {
-                  "key": "longitude",
-                  "value": "77.2090",
-                  "type": "text"
-                },
-                {
                   "key": "status",
                   "value": "pending",
                   "type": "text"
