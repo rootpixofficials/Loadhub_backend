@@ -56,9 +56,13 @@ export const getDriverEarnings = async (driver_id) => {
     // 2. Get Recent Payouts
     const payoutsQuery = `
         SELECT 
-            t.pickup_location, t.drop_location, 
+            t.*, 
             CONCAT('LOAD-', t.id) AS formatted_trip_id, 
-            tx.created_at, tx.amount, tx.status
+            tx.id AS transaction_id,
+            tx.payment_type,
+            tx.amount, 
+            tx.status,
+            tx.created_at
         FROM trips t
         JOIN transactions tx ON t.id = tx.trip_id
         WHERE t.driver_id = ?

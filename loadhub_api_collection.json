@@ -399,6 +399,26 @@
                   "type": "text"
                 },
                 {
+                  "key": "status",
+                  "value": "pending",
+                  "type": "text"
+                },
+                {
+                  "key": "basic_location",
+                  "value": "Delhi, India",
+                  "type": "text"
+                },
+                {
+                  "key": "basic_latitude",
+                  "value": "28.6139",
+                  "type": "text"
+                },
+                {
+                  "key": "basic_longitude",
+                  "value": "77.2090",
+                  "type": "text"
+                },
+                {
                   "key": "insurance_certificate",
                   "type": "file",
                   "src": []
@@ -519,6 +539,11 @@
                 {
                   "key": "license_expiry",
                   "value": "2030-01-01",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
                   "type": "text"
                 },
                 {
